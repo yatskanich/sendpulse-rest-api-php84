@@ -1,0 +1,18 @@
+services:
+  cli:
+    # Вказуємо Docker збирати образ з Dockerfile в поточній директорії
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sendpulse_php_cli # Ім'я контейнера для зручності
+    working_dir: /app # Робоча директорія всередині контейнера
+    volumes:
+      # Монтуємо поточну директорію (де лежить docker-compose.yml)
+      # в директорію /app всередині контейнера.
+      # Це дозволить вам бачити зміни файлів, зроблені Rector, на вашій хост-машині.
+      - ./:/app
+    # Ці параметри потрібні, щоб контейнер залишався працюючим
+    # і ви могли підключитися до нього через 'docker-compose exec'
+    # та взаємодіяти з shell.
+    tty: true
+    stdin_open: true

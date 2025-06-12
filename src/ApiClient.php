@@ -18,37 +18,17 @@ use Sendpulse\RestApi\Storage\FileStorage;
  */
 class ApiClient implements ApiInterface
 {
+    private string $apiUrl = 'https://api.sendpulse.com';
 
-    /**
-     * @var string
-     */
-    private $apiUrl = 'https://api.sendpulse.com';
+    private readonly string $userId;
 
-    /**
-     * @var string
-     */
-    private $userId;
+    private readonly string $secret;
 
-    /**
-     * @var string
-     */
-    private $secret;
+    private ?string $token;
 
-    /**
-     * @var string|null
-     */
-    private $token;
+    private bool $refreshToken = false;
 
-    /**
-     * @var bool
-     */
-    private $refreshToken = false;
-
-    /**
-     * @var TokenStorageInterface|FileStorage|null
-     */
-    private $tokenStorage;
-
+    private readonly TokenStorageInterface|FileStorage|null $tokenStorage;
 
     /**
      * ApiClient constructor
@@ -57,7 +37,7 @@ class ApiClient implements ApiInterface
      * @param TokenStorageInterface|null $tokenStorage
      * @throws ApiClientException
      */
-    public function __construct(string $userId, string $secret, TokenStorageInterface $tokenStorage = null)
+    public function __construct(string $userId, string $secret, ?TokenStorageInterface $tokenStorage = null)
     {
         if ($tokenStorage === null) {
             $tokenStorage = new FileStorage();
@@ -86,11 +66,16 @@ class ApiClient implements ApiInterface
      */
     private function getToken(): bool
     {
-        $tokenResponse = $this->sendRequest('oauth/access_token', self::METHOD_POST, [
-            'grant_type' => 'client_credentials',
-            'client_id' => $this->userId,
-            'client_secret' => $this->secret,
-        ], false);
+        $tokenResponse = $this->sendRequest(
+            'oauth/access_token',
+            self::METHOD_POST,
+            [
+                'grant_type' => 'client_credentials',
+                'client_id' => $this->userId,
+                'client_secret' => $this->secret,
+            ],
+            false
+        );
 
         if (empty($tokenResponse['access_token'])) {
             return false;
@@ -113,8 +98,12 @@ class ApiClient implements ApiInterface
      * @return array|null
      * @throws ApiClientException
      */
-    protected function sendRequest(string $path, string $method = self::METHOD_GET, array $data = [], bool $useToken = true): ?array
-    {
+    protected function sendRequest(
+        string $path,
+        string $method = self::METHOD_GET,
+        array $data = [],
+        bool $useToken = true
+    ): ?array {
         $url = $this->apiUrl . '/' . $path;
         $curl = curl_init();
 
@@ -261,9 +250,9 @@ class ApiClient implements ApiInterface
      * @param string $bookName
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::post()
      */
+    #[\Deprecated]
     public function createAddressBook(string $bookName): ?array
     {
         return $this->post('addressbooks', ['bookName' => $bookName]);
@@ -276,9 +265,9 @@ class ApiClient implements ApiInterface
      * @param string $newName
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::put()
      */
+    #[\Deprecated]
     public function editAddressBook(int $id, string $newName): ?array
     {
         return $this->put('addressbooks/' . $id, ['name' => $newName]);
@@ -290,9 +279,9 @@ class ApiClient implements ApiInterface
      * @param int $id
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function removeAddressBook(int $id): ?array
     {
         return $this->delete('addressbooks/' . $id);
@@ -304,12 +293,12 @@ class ApiClient implements ApiInterface
      * @param int|null $limit
      * @param int|null $offset
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
-    public function listAddressBooks(int $limit = null, int $offset = null): ?array
+    #[\Deprecated]
+    public function listAddressBooks(?int $limit = null, ?int $offset = null): ?array
     {
-        $data = array();
+        $data = [];
         if (null !== $limit) {
             $data['limit'] = $limit;
         }
@@ -326,9 +315,9 @@ class ApiClient implements ApiInterface
      * @param int $id
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function getBookInfo(int $id): ?array
     {
         return $this->get('addressbooks/' . $id);
@@ -340,9 +329,9 @@ class ApiClient implements ApiInterface
      * @param int $id
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function getBookVariables(int $id): ?array
     {
         return $this->get('addressbooks/' . $id . '/variables');
@@ -356,9 +345,9 @@ class ApiClient implements ApiInterface
      * @param array $vars User vars in [key=>value] format
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::post()
      */
+    #[\Deprecated]
     public function updateEmailVariables(int $bookID, string $email, array $vars): ?array
     {
         $data = ['email' => $email, 'variables' => []];
@@ -377,10 +366,10 @@ class ApiClient implements ApiInterface
      * @param int|null $offset
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
-    public function getEmailsFromBook(int $id, int $limit = null, int $offset = null): ?array
+    #[\Deprecated]
+    public function getEmailsFromBook(int $id, ?int $limit = null, ?int $offset = null): ?array
     {
         $data = [];
         if (null !== $limit) {
@@ -401,9 +390,9 @@ class ApiClient implements ApiInterface
      * @param array $additionalParams
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::post()
      */
+    #[\Deprecated]
     public function addEmails(int $bookID, array $emails, array $additionalParams = []): ?array
     {
         if (empty($bookID) || empty($emails)) {
@@ -428,9 +417,9 @@ class ApiClient implements ApiInterface
      * @param array $emails
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::delete()
      */
+    #[\Deprecated]
     public function removeEmails(int $bookID, array $emails): ?array
     {
         return $this->delete('addressbooks/' . $bookID . '/emails', [
@@ -445,9 +434,9 @@ class ApiClient implements ApiInterface
      * @param string $email
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function getEmailInfo(int $bookID, string $email): ?array
     {
         return $this->get('addressbooks/' . $bookID . '/emails/' . $email);
@@ -459,9 +448,9 @@ class ApiClient implements ApiInterface
      * @param int $bookID
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function campaignCost(int $bookID): ?array
     {
         return $this->get('addressbooks/' . $bookID . '/cost');
@@ -474,10 +463,10 @@ class ApiClient implements ApiInterface
      * @param int|null $offset
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
-    public function listCampaigns(int $limit = null, int $offset = null): ?array
+    #[\Deprecated]
+    public function listCampaigns(?int $limit = null, ?int $offset = null): ?array
     {
         $data = [];
         if (!empty($limit)) {
@@ -496,9 +485,9 @@ class ApiClient implements ApiInterface
      * @param int $id
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function getCampaignInfo(int $id): ?array
     {
         return $this->get('campaigns/' . $id);
@@ -510,9 +499,9 @@ class ApiClient implements ApiInterface
      * @param int $id
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function campaignStatByCountries(int $id): ?array
     {
         return $this->get('campaigns/' . $id . '/countries');
@@ -524,9 +513,9 @@ class ApiClient implements ApiInterface
      * @param int $id
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function campaignStatByReferrals(int $id): ?array
     {
         return $this->get('campaigns/' . $id . '/referrals');
@@ -549,24 +538,23 @@ class ApiClient implements ApiInterface
      * @param array $attachmentsBinary
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::post()
      */
+    #[\Deprecated]
     public function createCampaign(
         string $senderName,
         string $senderEmail,
         string $subject,
-               $bodyOrTemplateId,
-        int    $bookId,
+        $bodyOrTemplateId,
+        int $bookId,
         string $name = '',
-        array  $attachments = [],
+        array $attachments = [],
         string $type = '',
-        bool   $useTemplateId = false,
+        bool $useTemplateId = false,
         string $sendDate = '',
-        int    $segmentId = null,
-        array  $attachmentsBinary = []
-    ): ?array
-    {
+        ?int $segmentId = null,
+        array $attachmentsBinary = []
+    ): ?array {
         if (empty($senderName) || empty($senderEmail) || empty($subject) || empty($bodyOrTemplateId) || empty($bookId)) {
             throw new ApiClientException('Not all data.');
         }
@@ -576,7 +564,7 @@ class ApiClient implements ApiInterface
             $paramValue = $bodyOrTemplateId;
         } else {
             $paramName = 'body';
-            $paramValue = base64_encode($bodyOrTemplateId);
+            $paramValue = base64_encode((string)$bodyOrTemplateId);
         }
 
         $data = [
@@ -612,9 +600,9 @@ class ApiClient implements ApiInterface
      * @param int $id
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::delete()
      */
+    #[\Deprecated]
     public function cancelCampaign(int $id): ?array
     {
         return $this->delete('campaigns/' . $id);
@@ -624,9 +612,9 @@ class ApiClient implements ApiInterface
      * List all senders
      * @link https://sendpulse.com/integrations/api/bulk-email#senders-list
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function listSenders(): ?array
     {
         return $this->get('senders');
@@ -636,9 +624,9 @@ class ApiClient implements ApiInterface
      * List SMS senders
      * @link https://sendpulse.com/integrations/api/bulk-sms#get-senders
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function listSMSSenders(): ?array
     {
         return $this->get('sms/senders');
@@ -651,9 +639,9 @@ class ApiClient implements ApiInterface
      * @param $senderEmail
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::post()
      */
+    #[\Deprecated]
     public function addSender($senderName, $senderEmail): ?array
     {
         return $this->post('senders', [
@@ -668,9 +656,9 @@ class ApiClient implements ApiInterface
      * @param string $email
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::delete()
      */
+    #[\Deprecated]
     public function removeSender(string $email): ?array
     {
         return $this->delete('senders', [
@@ -685,9 +673,9 @@ class ApiClient implements ApiInterface
      * @param string $code
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::post()
      */
+    #[\Deprecated]
     public function activateSender(string $email, string $code): ?array
     {
         return $this->post('senders/' . $email . '/code', [
@@ -701,9 +689,9 @@ class ApiClient implements ApiInterface
      * @param string $email
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function getSenderActivationMail(string $email): ?array
     {
         return $this->get('senders/' . $email . '/code');
@@ -715,9 +703,9 @@ class ApiClient implements ApiInterface
      * @param string $email
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function getEmailGlobalInfo(string $email): ?array
     {
         return $this->get('emails/' . $email);
@@ -729,9 +717,9 @@ class ApiClient implements ApiInterface
      * @param array $emails Emails list
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::post()
      */
+    #[\Deprecated]
     public function getEmailsGlobalInfo(array $emails): ?array
     {
         return $this->post('emails', $emails);
@@ -743,9 +731,9 @@ class ApiClient implements ApiInterface
      * @param string $email
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::delete()
      */
+    #[\Deprecated]
     public function removeEmailFromAllBooks(string $email): ?array
     {
         return $this->delete('emails/' . $email);
@@ -757,9 +745,9 @@ class ApiClient implements ApiInterface
      * @param $email
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function emailStatByCampaigns($email): ?array
     {
         return $this->get('emails/' . $email . '/campaigns');
@@ -770,8 +758,8 @@ class ApiClient implements ApiInterface
      * @link https://sendpulse.com/integrations/api/bulk-email#view-blacklist
      * @throws ApiClientException
      * @see ApiClient::get()
-     * @deprecated
      */
+    #[\Deprecated]
     public function getBlackList(): ?array
     {
         return $this->get('blacklist');
@@ -784,9 +772,9 @@ class ApiClient implements ApiInterface
      * @param string $comment
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::post()
      */
+    #[\Deprecated]
     public function addToBlackList(string $emails, string $comment = ''): ?array
     {
         return $this->post('blacklist', [
@@ -801,15 +789,14 @@ class ApiClient implements ApiInterface
      * @param string $emails string with emails, separator - ,
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::delete()
      */
+    #[\Deprecated]
     public function removeFromBlackList(string $emails): ?array
     {
         return $this->delete('blacklist', [
             'emails' => base64_encode($emails)
         ]);
-
     }
 
     /**
@@ -818,9 +805,9 @@ class ApiClient implements ApiInterface
      * @param string $currency
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function getBalance(string $currency = ''): ?array
     {
         $currency = strtoupper($currency);
@@ -844,11 +831,18 @@ class ApiClient implements ApiInterface
      * @param string $country
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
-    public function smtpListEmails(int $limit = 0, int $offset = 0, string $fromDate = '', string $toDate = '', string $sender = '', string $recipient = '', string $country = 'off'): ?array
-    {
+    #[\Deprecated]
+    public function smtpListEmails(
+        int $limit = 0,
+        int $offset = 0,
+        string $fromDate = '',
+        string $toDate = '',
+        string $sender = '',
+        string $recipient = '',
+        string $country = 'off'
+    ): ?array {
         return $this->get('smtp/emails', [
             'limit' => $limit,
             'offset' => $offset,
@@ -866,9 +860,9 @@ class ApiClient implements ApiInterface
      * @param $id
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function smtpGetEmailInfoById($id): ?array
     {
         return $this->get('smtp/emails/' . $id);
@@ -881,12 +875,12 @@ class ApiClient implements ApiInterface
      * @param int|null $offset
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
-    public function smtpListUnsubscribed(int $limit = null, int $offset = null): ?array
+    #[\Deprecated]
+    public function smtpListUnsubscribed(?int $limit = null, ?int $offset = null): ?array
     {
-        $data = array();
+        $data = [];
         if (null !== $limit) {
             $data['limit'] = $limit;
         }
@@ -903,9 +897,9 @@ class ApiClient implements ApiInterface
      * @param array $emails
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::post()
      */
+    #[\Deprecated]
     public function smtpUnsubscribeEmails(array $emails): ?array
     {
         return $this->post('smtp/unsubscribe', [
@@ -919,15 +913,14 @@ class ApiClient implements ApiInterface
      * @param $emails
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::delete()
      */
+    #[\Deprecated]
     public function smtpRemoveFromUnsubscribe($emails): ?array
     {
         return $this->delete('smtp/unsubscribe', [
             'emails' => $emails
         ]);
-
     }
 
     /**
@@ -935,9 +928,9 @@ class ApiClient implements ApiInterface
      * @link https://sendpulse.com/integrations/api/smtp#ip-smtp
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function smtpListIP(): ?array
     {
         return $this->get('smtp/ips');
@@ -949,9 +942,9 @@ class ApiClient implements ApiInterface
      * @param array $email
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::post()
      */
+    #[\Deprecated]
     public function smtpSendMail(array $email): ?array
     {
         $emailData = $email;
@@ -971,10 +964,10 @@ class ApiClient implements ApiInterface
      * @param int|null $offset
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
-    public function pushListCampaigns(int $limit = null, int $offset = null): ?array
+    #[\Deprecated]
+    public function pushListCampaigns(?int $limit = null, ?int $offset = null): ?array
     {
         $data = [];
         if (null !== $limit) {
@@ -994,12 +987,12 @@ class ApiClient implements ApiInterface
      * @param int|null $offset
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
-    public function pushListWebsites(int $limit = null, int $offset = null): ?array
+    #[\Deprecated]
+    public function pushListWebsites(?int $limit = null, ?int $offset = null): ?array
     {
-        $data = array();
+        $data = [];
         if (null !== $limit) {
             $data['limit'] = $limit;
         }
@@ -1015,9 +1008,9 @@ class ApiClient implements ApiInterface
      * @link https://sendpulse.com/integrations/api/web-push#get-websites-number
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function pushCountWebsites(): ?array
     {
         return $this->get('push/websites/total');
@@ -1029,9 +1022,9 @@ class ApiClient implements ApiInterface
      * @param int $websiteId
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function pushListWebsiteVariables(int $websiteId): ?array
     {
         return $this->get('push/websites/' . $websiteId . '/variables');
@@ -1045,10 +1038,10 @@ class ApiClient implements ApiInterface
      * @param int|null $offset
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
-    public function pushListWebsiteSubscriptions(int $websiteID, int $limit = null, int $offset = null): ?array
+    #[\Deprecated]
+    public function pushListWebsiteSubscriptions(int $websiteID, ?int $limit = null, ?int $offset = null): ?array
     {
         $data = [];
         if (null !== $limit) {
@@ -1067,9 +1060,9 @@ class ApiClient implements ApiInterface
      * @param $websiteID
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function pushCountWebsiteSubscriptions($websiteID): ?array
     {
         return $this->get('push/websites/' . $websiteID . '/subscriptions/total');
@@ -1082,9 +1075,9 @@ class ApiClient implements ApiInterface
      * @param int $stateValue
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::post()
      */
+    #[\Deprecated]
     public function pushSetSubscriptionState(int $subscriptionID, int $stateValue): ?array
     {
         return $this->post('push/subscriptions/state', [
@@ -1099,9 +1092,9 @@ class ApiClient implements ApiInterface
      * @param int $websiteId
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function pushGetWebsiteInfo(int $websiteId): ?array
     {
         return $this->get('push/websites/info/' . $websiteId);
@@ -1114,9 +1107,9 @@ class ApiClient implements ApiInterface
      * @param array $additionalParams
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::post()
      */
+    #[\Deprecated]
     public function createPushTask(array $taskInfo, array $additionalParams = []): ?array
     {
         $data = $taskInfo;
@@ -1141,9 +1134,9 @@ class ApiClient implements ApiInterface
      * @param int $websiteID
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function getPushIntegrationCode(int $websiteID): ?array
     {
         return $this->get('push/websites/' . $websiteID . '/code');
@@ -1155,9 +1148,9 @@ class ApiClient implements ApiInterface
      * @param int $campaignID
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function getPushCampaignStat(int $campaignID): ?array
     {
         return $this->get('push/tasks/' . $campaignID);
@@ -1169,9 +1162,9 @@ class ApiClient implements ApiInterface
      * @param array $variables
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::post()
      */
+    #[\Deprecated]
     public function startEventAutomation360(string $eventName, array $variables): ?array
     {
         if (!array_key_exists('email', $variables) && !array_key_exists('phone', $variables)) {
@@ -1188,9 +1181,9 @@ class ApiClient implements ApiInterface
      * @param array $phones
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::post()
      */
+    #[\Deprecated]
     public function addPhones(int $bookID, array $phones): ?array
     {
         return $this->post('sms/numbers', [
@@ -1206,9 +1199,9 @@ class ApiClient implements ApiInterface
      * @param array $phonesWithVariables
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::post()
      */
+    #[\Deprecated]
     public function addPhonesWithVariables(int $bookID, array $phonesWithVariables): ?array
     {
         return $this->post('sms/numbers/variables', [
@@ -1225,9 +1218,9 @@ class ApiClient implements ApiInterface
      * @param array $variables
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::put()
      */
+    #[\Deprecated]
     public function updatePhoneVaribales(int $bookID, array $phones, array $variables): ?array
     {
         return $this->put('sms/numbers', [
@@ -1235,7 +1228,6 @@ class ApiClient implements ApiInterface
             'phones' => $phones,
             'variables' => $variables
         ]);
-
     }
 
     /**
@@ -1245,9 +1237,9 @@ class ApiClient implements ApiInterface
      * @param array $phones
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::delete()
      */
+    #[\Deprecated]
     public function deletePhones(int $bookID, array $phones): ?array
     {
         return $this->delete('sms/numbers', [
@@ -1263,9 +1255,9 @@ class ApiClient implements ApiInterface
      * @param string $phoneNumber
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function getPhoneInfo(int $bookID, string $phoneNumber): ?array
     {
         return $this->get('sms/numbers/info/' . $bookID . '/' . $phoneNumber);
@@ -1277,9 +1269,9 @@ class ApiClient implements ApiInterface
      * @param array $phones
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::post()
      */
+    #[\Deprecated]
     public function addPhonesToBlacklist(array $phones): ?array
     {
         return $this->post('sms/black_list', [
@@ -1293,9 +1285,9 @@ class ApiClient implements ApiInterface
      * @param array $phones
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::delete()
      */
+    #[\Deprecated]
     public function removePhonesFromBlacklist(array $phones): ?array
     {
         return $this->delete('sms/black_list', [
@@ -1308,9 +1300,9 @@ class ApiClient implements ApiInterface
      * @link https://sendpulse.com/integrations/api/bulk-sms#view-blacklist
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function getPhonesFromBlacklist(): ?array
     {
         return $this->get('sms/black_list');
@@ -1324,9 +1316,9 @@ class ApiClient implements ApiInterface
      * @param array $additionalParams
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::post()
      */
+    #[\Deprecated]
     public function sendSmsByBook(int $bookID, array $params, array $additionalParams = []): ?array
     {
         $data = [
@@ -1350,9 +1342,9 @@ class ApiClient implements ApiInterface
      * @param array $additionalParams
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::post()
      */
+    #[\Deprecated]
     public function sendSmsByList(array $phones, array $params, array $additionalParams): ?array
     {
         $data = [
@@ -1374,9 +1366,9 @@ class ApiClient implements ApiInterface
      * @param array $params
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function listSmsCampaigns(array $params = []): ?array
     {
         return $this->get('sms/campaigns/list', $params);
@@ -1388,9 +1380,9 @@ class ApiClient implements ApiInterface
      * @param int $campaignID
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function getSmsCampaignInfo(int $campaignID): ?array
     {
         return $this->get('sms/campaigns/info/' . $campaignID);
@@ -1402,9 +1394,9 @@ class ApiClient implements ApiInterface
      * @param int $campaignID
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::put()
      */
+    #[\Deprecated]
     public function cancelSmsCampaign(int $campaignID): ?array
     {
         return $this->put('sms/campaigns/cancel/' . $campaignID);
@@ -1417,9 +1409,9 @@ class ApiClient implements ApiInterface
      * @param array $additionalParams
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::get()
      */
+    #[\Deprecated]
     public function getSmsCampaignCost(array $params, array $additionalParams = []): ?array
     {
         if (!isset($params['addressBookId']) && !isset($params['phones'])) {
@@ -1439,9 +1431,9 @@ class ApiClient implements ApiInterface
      * @param int $campaignID
      * @return array|null
      * @throws ApiClientException
-     * @deprecated
      * @see ApiClient::delete()
      */
+    #[\Deprecated]
     public function deleteSmsCampaign(int $campaignID): ?array
     {
         return $this->delete('sms/campaigns', ['id' => $campaignID]);

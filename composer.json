@@ -1,6 +1,6 @@
 {
-  "name": "sendpulse/rest-api",
-  "description": "Sendpulse REST API client library",
+  "name": "yatskanich/sendpulse-rest-api-php84",
+  "description": "Sendpulse REST API client library for PHP 8.4 support",
   "keywords": [
     "sendpulse",
     "rest",
@@ -22,9 +22,12 @@
     }
   ],
   "require": {
-    "php": ">=7.1.0",
+    "php": ">=8.4",
     "ext-json": "*",
     "ext-curl": "*"
+  },
+  "require-dev": {
+    "rector/rector": ">=2.0.18"
   },
   "autoload": {
     "psr-4": {

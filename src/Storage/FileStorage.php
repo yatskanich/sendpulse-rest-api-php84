@@ -8,16 +8,10 @@ class FileStorage implements TokenStorageInterface
 {
 
     /**
-     * @var string
-     */
-    protected $storageFolder = '';
-
-    /**
      * @param string $storageFolder
      */
-    public function __construct(string $storageFolder = '')
+    public function __construct(protected string $storageFolder = '')
     {
-        $this->storageFolder = $storageFolder;
     }
 
     /**

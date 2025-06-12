@@ -7,17 +7,14 @@ use Sendpulse\RestApi\Contracts\TokenStorageInterface;
 
 class MemcacheStorage implements TokenStorageInterface
 {
-    /**
-     * @var null | MemcacheStorage
-     */
-    protected $instance;
+    protected ?MemcacheStorage $instance = null;
 
     /**
      * 30 days
      *
      * @var int
      */
-    protected $keyTtl = 3600;
+    protected int $keyTtl = 3600;
 
     /**
      * @param string $host
@@ -37,7 +34,7 @@ class MemcacheStorage implements TokenStorageInterface
     /**
      * @return MemcacheStorage|null
      */
-    public function getInstance()
+    public function getInstance(): ?MemcacheStorage
     {
         return $this->instance;
     }
