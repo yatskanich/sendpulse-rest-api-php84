@@ -9,8 +9,7 @@ class SessionStorage implements TokenStorageInterface
     /**
      * @param string $key
      * @param string $token
-     *
-     * @return void
+     * @return bool
      */
     public function set(string $key, string $token): bool
     {

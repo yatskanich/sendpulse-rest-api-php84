@@ -13,12 +13,12 @@ namespace Sendpulse\RestApi\Contracts;
 interface ApiInterface
 {
 
-    const METHOD_GET = 'GET';
-    const METHOD_POST = 'POST';
-    const METHOD_PUT = 'PUT';
-    const METHOD_PATCH = 'PATCH';
-    const METHOD_DELETE = 'DELETE';
-    const TOKEN_TYPE_BEARER = 'Bearer';
+    const string METHOD_GET = 'GET';
+    const string METHOD_POST = 'POST';
+    const string METHOD_PUT = 'PUT';
+    const string METHOD_PATCH = 'PATCH';
+    const string METHOD_DELETE = 'DELETE';
+    const string TOKEN_TYPE_BEARER = 'Bearer';
 
     /**
      * Send GET request
