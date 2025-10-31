@@ -165,8 +165,16 @@ class ApiClient implements ApiInterface
                 $this->getToken();
                 $responseBody = $this->sendRequest($path, $method, $data);
             } else {
+                $dataAsText = '';
+
+                if (is_array($data)) {
+                    foreach ($data as $key => $value) {
+                        $dataAsText .= $key . ': ' . $value . "\n";
+                    }
+                }
+
                 throw new ApiClientException(
-                    'Request ' . $method . ' ' . $url . ' failed!',
+                    "Request $method $url code - $httpCode failed! $response $dataAsText",
                     $httpCode,
                     null,
                     $responseBody,
