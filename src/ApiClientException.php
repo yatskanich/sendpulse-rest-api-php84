@@ -7,32 +7,25 @@ use Throwable;
 
 class ApiClientException extends Exception
 {
-    /**
-     * @param string $message
-     * @param int $code
-     * @param Throwable|null $previous
-     * @param array $response
-     * @param string|null $headers
-     * @param string|null $curlErrors
-     */
     public function __construct(
-        string    $message = "",
-        int       $code = 0,
+        string $message = "",
+        int $code = 0,
         ?Throwable $previous = null,
-        private readonly array $response = [],
+        public ?array $response = null {
+            get {
+                if ($this->response === null) {
+                    $this->response = [];
+                }
+                return $this->response;
+            }
+        },
         private readonly ?string $headers = null,
         private readonly ?string $curlErrors = null
-    )
-    {
+    ) {
+        if ($this->response === null) {
+            $this->response = [];
+        }
         parent::__construct($message, $code, $previous);
-    }
-
-    /**
-     * @return array
-     */
-    public function getResponse(): array
-    {
-        return $this->response;
     }
 
     /**

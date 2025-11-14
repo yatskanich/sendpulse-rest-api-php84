@@ -11,8 +11,8 @@
  */
 
 use Sendpulse\RestApi\ApiClient;
-use Sendpulse\RestApi\Storage\FileStorage;
 use Sendpulse\RestApi\ApiClientException;
+use Sendpulse\RestApi\Storage\FileStorage;
 
 define('API_USER_ID', '');
 define('API_SECRET', '');
@@ -24,7 +24,7 @@ try {
     var_dump([
         'message' => $e->getMessage(),
         'http_code' => $e->getCode(),
-        'response' => $e->getResponse(),
+        'response' => $e->response,
         'curl_errors' => $e->getCurlErrors(),
         'headers' => $e->getHeaders()
     ]);
@@ -41,7 +41,7 @@ try {
     var_dump([
         'message' => $e->getMessage(),
         'http_code' => $e->getCode(),
-        'response' => $e->getResponse(),
+        'response' => $e->response,
         'curl_errors' => $e->getCurlErrors(),
         'headers' => $e->getHeaders()
     ]);
@@ -63,7 +63,7 @@ try {
     var_dump([
         'message' => $e->getMessage(),
         'http_code' => $e->getCode(),
-        'response' => $e->getResponse(),
+        'response' => $e->response,
         'curl_errors' => $e->getCurlErrors(),
         'headers' => $e->getHeaders()
     ]);
@@ -98,7 +98,7 @@ try {
     var_dump([
         'message' => $e->getMessage(),
         'http_code' => $e->getCode(),
-        'response' => $e->getResponse(),
+        'response' => $e->response,
         'curl_errors' => $e->getCurlErrors(),
         'headers' => $e->getHeaders()
     ]);
@@ -142,7 +142,7 @@ try {
     var_dump([
         'message' => $e->getMessage(),
         'http_code' => $e->getCode(),
-        'response' => $e->getResponse(),
+        'response' => $e->response,
         'curl_errors' => $e->getCurlErrors(),
         'headers' => $e->getHeaders()
     ]);
@@ -162,7 +162,7 @@ try {
     var_dump([
         'message' => $e->getMessage(),
         'http_code' => $e->getCode(),
-        'response' => $e->getResponse(),
+        'response' => $e->response,
         'curl_errors' => $e->getCurlErrors(),
         'headers' => $e->getHeaders()
     ]);
@@ -188,7 +188,7 @@ try {
     var_dump([
         'message' => $e->getMessage(),
         'http_code' => $e->getCode(),
-        'response' => $e->getResponse(),
+        'response' => $e->response,
         'curl_errors' => $e->getCurlErrors(),
         'headers' => $e->getHeaders()
     ]);
@@ -216,7 +216,7 @@ try {
     var_dump([
         'message' => $e->getMessage(),
         'http_code' => $e->getCode(),
-        'response' => $e->getResponse(),
+        'response' => $e->response,
         'curl_errors' => $e->getCurlErrors(),
         'headers' => $e->getHeaders()
     ]);
@@ -237,7 +237,7 @@ try {
     var_dump([
         'message' => $e->getMessage(),
         'http_code' => $e->getCode(),
-        'response' => $e->getResponse(),
+        'response' => $e->response,
         'curl_errors' => $e->getCurlErrors(),
         'headers' => $e->getHeaders()
     ]);
@@ -262,7 +262,7 @@ try {
     var_dump([
         'message' => $e->getMessage(),
         'http_code' => $e->getCode(),
-        'response' => $e->getResponse(),
+        'response' => $e->response,
         'curl_errors' => $e->getCurlErrors(),
         'headers' => $e->getHeaders()
     ]);
@@ -281,7 +281,7 @@ try {
     var_dump([
         'message' => $e->getMessage(),
         'http_code' => $e->getCode(),
-        'response' => $e->getResponse(),
+        'response' => $e->response,
         'curl_errors' => $e->getCurlErrors(),
         'headers' => $e->getHeaders()
     ]);
@@ -300,7 +300,7 @@ try {
     var_dump([
         'message' => $e->getMessage(),
         'http_code' => $e->getCode(),
-        'response' => $e->getResponse(),
+        'response' => $e->response,
         'curl_errors' => $e->getCurlErrors(),
         'headers' => $e->getHeaders()
     ]);

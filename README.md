@@ -59,7 +59,7 @@ try {
     var_dump([
         'message' => $e->getMessage(),
         'http_code' => $e->getCode(),
-        'response' => $e->getResponse(),
+        'response' => $e->response,
         'curl_errors' => $e->getCurlErrors(),
         'headers' => $e->getHeaders()
     ]);
@@ -95,7 +95,7 @@ try {
     var_dump([
         'message' => $e->getMessage(),
         'http_code' => $e->getCode(),
-        'response' => $e->getResponse(),
+        'response' => $e->response,
         'curl_errors' => $e->getCurlErrors(),
         'headers' => $e->getHeaders()
     ]);
@@ -117,7 +117,7 @@ try {
     var_dump([
         'message' => $e->getMessage(),
         'http_code' => $e->getCode(),
-        'response' => $e->getResponse(),
+        'response' => $e->response,
         'curl_errors' => $e->getCurlErrors(),
         'headers' => $e->getHeaders()
     ]);
@@ -144,7 +144,7 @@ try {
     var_dump([
         'message' => $e->getMessage(),
         'http_code' => $e->getCode(),
-        'response' => $e->getResponse(),
+        'response' => $e->response,
         'curl_errors' => $e->getCurlErrors(),
         'headers' => $e->getHeaders()
     ]);
@@ -166,7 +166,7 @@ try {
     var_dump([
         'message' => $e->getMessage(),
         'http_code' => $e->getCode(),
-        'response' => $e->getResponse(),
+        'response' => $e->response,
         'curl_errors' => $e->getCurlErrors(),
         'headers' => $e->getHeaders()
     ]);
@@ -193,7 +193,7 @@ try {
     var_dump([
         'message' => $e->getMessage(),
         'http_code' => $e->getCode(),
-        'response' => $e->getResponse(),
+        'response' => $e->response,
         'curl_errors' => $e->getCurlErrors(),
         'headers' => $e->getHeaders()
     ]);
@@ -231,7 +231,7 @@ try {
     var_dump([
         'message' => $e->getMessage(),
         'http_code' => $e->getCode(),
-        'response' => $e->getResponse(),
+        'response' => $e->response,
         'curl_errors' => $e->getCurlErrors(),
         'headers' => $e->getHeaders()
     ]);
@@ -259,7 +259,7 @@ try {
     var_dump([
         'message' => $e->getMessage(),
         'http_code' => $e->getCode(),
-        'response' => $e->getResponse(),
+        'response' => $e->response,
         'curl_errors' => $e->getCurlErrors(),
         'headers' => $e->getHeaders()
     ]);
