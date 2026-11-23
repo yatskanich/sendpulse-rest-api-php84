@@ -157,8 +157,6 @@ class ApiClient implements ApiInterface
         $responseHeaders = substr($response, 0, $headerSize);
         $curlErrors = curl_error($curl);
 
-        curl_close($curl);
-
         if ($httpCode >= 400) {
             if ($httpCode === 401 && !$this->refreshToken) {
                 $this->refreshToken = true;
